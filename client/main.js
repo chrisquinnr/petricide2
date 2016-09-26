@@ -88,7 +88,12 @@ Streamy.on('__cellClick__', (data)=>{
 
   let d = data.data;
 
-  console.log(d);
+  let col = 'opp';
+  if(d.player === Streamy.id()){
+    col = 'you';
+  }
+
+  $('.rowCell[data-row=' + d.row + '][data-position=' + d.position + ']').addClass(col);
 
 });
 
@@ -139,7 +144,14 @@ Template.App.events({
     return false;
   },
   'click .rowCell':(evt, tpl)=>{
-    Streamy.rooms(room.get()).emit('__cellClick__', {data: {player: Streamy.id()}});
+    let node = evt.currentTarget.dataset;
+    let elem = evt.currentTarget
+    $(elem).removeClass('opp');
+    $(elem).addClass('you');
+
+    Streamy.rooms(room.get()).emit('__cellClick__', {data: {player: Streamy.id(), row:node.row, position: node.position}});
+
+
   }
 });
 
