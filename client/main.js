@@ -6,13 +6,16 @@ import {Clients} from '/common/collections';
 import {Rooms} from '/common/collections';
 import {ReactiveDict} from 'meteor/reactive-dict';
 
-let Scores = new ReactiveDict(0);
-let Opponent = new ReactiveDict(0);
-
-
-var nick = new ReactiveVar();
-var opponent = new ReactiveVar();
-var room = new ReactiveVar('lobby');
+let nick = new ReactiveVar();
+let opponent = new ReactiveVar([]);
+let colorChoices = new ReactiveVar([
+  {label:'Red', class:'red'},
+  {label:'Blue', class:'blue'},
+  {label:'Green', class:'green'},
+  {label:'Purple', class:'purple'}
+]);
+let color = new ReactiveVar();
+let room = new ReactiveVar('lobby');
 
 // Add a local only collection to manage messages
 let Messages = new Mongo.Collection(null);
@@ -55,8 +58,10 @@ Streamy.on('__join__', function (data) {
   // Only want people joining our current game
   if (data.room === room.get()) {
     var c = Clients.findOne({'sid': data.sid}); // lookup opponent nickname
-    if(c && c.nick){
-      opponent.set(c.nick);
+    if (c && c.nick){
+      let opps = opponent.get();
+      opps.push(c.nick);
+      opponent.set(opps);
     }
 
     // Emit a message to the newcomer, along with our ID
@@ -76,22 +81,29 @@ Streamy.on('match__found', (data)=> {
     if (data.__in === room.get()) {
       var c = Clients.findOne({'sid': data.data.opponent});
       if (c && c.nick) {
-        opponent.set(c.nick);
+        let opps = opponent.get();
+        opps.push(c.nick);
+        opponent.set(_.uniq(opps));
       }
     }
   }
 });
 
 
-Streamy.on('__cellClick__', (data)=>{
-  if(!data) return false;
+Streamy.on('__cellClick__', (data)=> {
+  if (!data) return false;
 
   let d = data.data;
 
-  let col = 'opp';
-  if(d.player === Streamy.id()){
-    col = 'you';
+  let col = color.get();
+  if (d.player !== Streamy.id()) {
+    col = d.color;
   }
+
+  let cols = colorChoices.get();
+  _.each(cols, (c)=>{
+    $('.rowCell[data-row=' + d.row + '][data-position=' + d.position + ']').removeClass(c.class);
+  });
 
   $('.rowCell[data-row=' + d.row + '][data-position=' + d.position + ']').addClass(col);
 
@@ -100,11 +112,11 @@ Streamy.on('__cellClick__', (data)=>{
 
 // Someone has left
 Streamy.on('__leave__', function (data) {
-  // var c = Clients.findOne({'sid': data.sid});
-  // var msg = ((c && c.nick) || 'Someone') + " has left";
-
+  let opp = opponent.get();
+  var c = Clients.findOne({'sid': data.sid});
+  let mod = _.without(opp, c.nick)
+  opponent.set(mod);
 });
-
 
 Template.App.rendered = function () {
   this.$('.chat__message').focus();
@@ -118,8 +130,12 @@ Template.App.events({
     var $ele = tpl.$('#room__input');
     var val = $ele.val();
 
-    if (!val)
+    if (!val){
       return;
+    }
+
+    let col = $('#colors').find(":selected").val();
+    color.set(col)
 
     // Join the room
     Streamy.join(val.toLowerCase());
@@ -143,19 +159,30 @@ Template.App.events({
 
     return false;
   },
-  'click .rowCell':(evt, tpl)=>{
+  'mousedown .rowCell': (evt, tpl)=> {
     let node = evt.currentTarget.dataset;
-    let elem = evt.currentTarget
-    $(elem).removeClass('opp');
-    $(elem).addClass('you');
 
-    Streamy.rooms(room.get()).emit('__cellClick__', {data: {player: Streamy.id(), row:node.row, position: node.position}});
+    Streamy.rooms(room.get()).emit('__cellClick__', {
+      data: {
+        player: Streamy.id(),
+        row: node.row,
+        position: node.position,
+        color: color.get()
+      }
+    });
 
 
   }
 });
 
 Template.App.helpers({
+  getColors: ()=> {
+    return colorChoices.get()
+  },
+  randomSelect:(col)=>{
+    let rand = _.sample(colorChoices.get());
+    if(rand.class === col) return true;
+  },
   selectedClass: function (room_name) {
     var current_room = room.get();
 
@@ -192,16 +219,6 @@ Template.App.helpers({
 
     return rows;
 
-  },
-  getScoreHelper(row, position){
-    let k = row.toString() + position.toString()
-    let all = Scores.all();
-    return all[k];
-  },
-  getOppScore(row, position){
-    let k = row.toString() + position.toString()
-    let all = Opponent.all();
-    return all[k];
   }
 });
 
@@ -210,7 +227,16 @@ Template.registerHelper('nick', function () {
 });
 
 Template.registerHelper('opponent', function () {
-  return opponent.get();
+  if (opponent.get()) {
+    return opponent.get();
+  } else {
+    return '...waiting'
+  }
+
+});
+
+Template.registerHelper('roomName', function () {
+  return room.get();
 });
 
 
