@@ -5,7 +5,7 @@ import {Streamy} from 'meteor/yuukan:streamy';
 import {Clients} from '/common/collections';
 import {Rooms} from '/common/collections';
 import {ReactiveDict} from 'meteor/reactive-dict';
-
+import HowlerGlobal from 'howler'
 let nick = new ReactiveVar();
 let opponent = new ReactiveVar([]);
 let colorChoices = new ReactiveVar([
@@ -19,6 +19,13 @@ let room = new ReactiveVar('lobby');
 
 // Add a local only collection to manage messages
 let Messages = new Mongo.Collection(null);
+let counter = new ReactiveVar(0);
+const blip = new Howl({
+  src: ['/Pickup_Coin4.wav']
+});
+const four = new Howl({
+  src: ['/Powerup2.wav']
+});
 
 // -------------------------------------------------------------------------- //
 // -------------------------------- Handlers -------------------------------- //
@@ -125,7 +132,7 @@ Template.App.rendered = function () {
 
 Template.App.events({
   'submit .create_or_join': function (evt, tpl) {
-    if (evt.preventDefault) evt.preventDefault();
+    evt.preventDefault();
 
     var $ele = tpl.$('#room__input');
     var val = $ele.val();
@@ -161,7 +168,14 @@ Template.App.events({
   },
   'mousedown .rowCell': (evt, tpl)=> {
     let node = evt.currentTarget.dataset;
-
+  
+    console.log(counter.get());
+    counter.set(counter.get()+1);
+    if(counter.get() % 4 === 0){
+      four.play();
+    } else {
+      blip.play();
+    }
     Streamy.rooms(room.get()).emit('__cellClick__', {
       data: {
         player: Streamy.id(),
