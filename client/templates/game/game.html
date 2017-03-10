@@ -1,0 +1,18 @@
+<template name="game">
+  <div class="chat">
+    <h1>{{roomName}}</h1>
+    <h2>{{nick}} vs {{opponent}}</h2>
+    <ul class="chat__messages">
+      {{#each grid}}
+        <div class="row col-lg-12 col-md-12" id="{{rowID}}">
+          {{#each cells}}
+            <div class="rowCell col-lg-1 col-md-1" data-row="{{../rowID}}" data-position="{{cellID}}">
+              &nbsp;
+            </div>
+          {{/each}}
+          <div class="clearfix"></div>
+        </div>
+      {{/each}}
+    </ul>
+  </div>
+</template>

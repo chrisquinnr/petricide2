@@ -1,33 +1,3 @@
-<head>
-  <meta charset="utf-8">
-  <title>Petricide 2.0</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
-  <link href='http://fonts.googleapis.com/css?family=Lato:400,700,900,400italic,700italic' rel='stylesheet'
-        type='text/css'>
-</head>
-
-<body>
-{{#unless nick}}
-  {{> NickChoice}}
-{{else}}
-  {{> App}}
-{{/unless}}
-</body>
-
-<template name="NickChoice">
-  <div class="home__wrapper">
-    <div class="home__centered">
-      <div class="home__body">
-        <h1 class="home__title">Petricide 2.0</h1>
-        <form>
-          <input type="text" id="nickname" class="home__nick" placeholder="Enter your handle and press Enter"/>
-        </form>
-        <p class="home__subtitle">Welcome back.</p>
-      </div>
-    </div>
-  </div>
-</template>
 
 <template name="App">
   <div class="app__wrapper">
@@ -67,23 +37,8 @@
       </ul>
     </div>
     {{#if isGame}}
-      <div class="chat">
-        <h1>{{roomName}}</h1>
-        <h2>{{nick}} vs {{opponent}}</h2>
-        <ul class="chat__messages">
-          {{#each grid}}
-            <div class="row col-lg-12 col-md-12" id="{{rowID}}">
-              {{#each cells}}
-                <div class="rowCell col-lg-1 col-md-1" data-row="{{../rowID}}" data-position="{{cellID}}">
-                  &nbsp;
-                </div>
-              {{/each}}
-              <div class="clearfix"></div>
-            </div>
-          {{/each}}
-        </ul>
-      </div>
-      {{else}}
+      {{> game}}
+    {{else}}
       <h1 class="splash-title">Welcome to Petricide 2.0 ;)</h1>
     {{/if}}
   </div>
