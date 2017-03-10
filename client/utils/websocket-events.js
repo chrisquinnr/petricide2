@@ -5,6 +5,7 @@ import { Clients } from '/common/collections';
 import { ReactiveDict } from 'meteor/reactive-dict';
 import * as logic from '/client/utils/reactive-vars';
 import { Messages } from '/client/utils/collections';
+import { State } from '/client/utils/collections';
 
 // On connected, subscribe to collections
 Streamy.onConnect(function() {
@@ -80,6 +81,8 @@ Streamy.on('__cellClick__', ( data ) => {
   if (d.player !== Streamy.id()) {
     col = d.color;
   }
+  console.log(d);
+  State.insert({data: d, room: logic.room.get()});
   
   let cols = logic.colorChoices.get();
   _.each(cols, ( c ) => {

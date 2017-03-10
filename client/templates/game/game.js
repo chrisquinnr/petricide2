@@ -23,5 +23,8 @@ Template.game.helpers({
     
     return rows;
     
+  },
+  testGroup:()=>{
+    
   }
 });
