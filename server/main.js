@@ -1,7 +1,6 @@
 import { Meteor } from 'meteor/meteor';
-import {Clients} from '/common/collections';
-import {Streamy} from 'meteor/yuukan:streamy';
-import {Rooms} from '/common/collections';
+import { Streamy } from 'meteor/yuukan:streamy';
+import { Clients, Rooms } from '/common/collections';
 
 /**
  * Called upon a client connection, insert the user
