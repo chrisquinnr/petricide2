@@ -6,26 +6,24 @@
       <p class="home__subtitle rooms__subtitle">
         SURVIVAL OF THE FITTEST
       </p>
-      {{#unless isGame}}
-        <p>
-          <select id="colors" name="colors">
-            {{#each getColors}}
-              {{#if randomSelect class}}
-                <option selected="selected" value="{{class}}">{{label}}</option>
-              {{else}}
-                <option value="{{class}}">{{label}}</option>
-              {{/if}}
-            {{/each}}
-          </select>
-        </p>
-      {{/unless}}
+      <p>
+        <select id="colors" name="colors">
+          {{#each getColors}}
+            {{#if randomSelect class}}
+              <option selected="selected" value="{{class}}">{{label}}</option>
+            {{else}}
+              <option value="{{class}}">{{label}}</option>
+            {{/if}}
+          {{/each}}
+        </select>
+      </p>
       <form class="create_or_join">
-        <input type="text" id="room__input" class="room__input" placeholder="Create or join a room"/>
+        <input type="text" id="room__input" class="room__input" placeholder="Create or join a game"/>
       </form>
 
       <ul class="rooms__list">
-        <li class="rooms__list__item rooms__list__separator">GAMES</li>
         <li class="rooms__list__item rooms__list__joinable {{selectedClass 'lobby'}}">Lobby</li>
+        <li class="rooms__list__item rooms__list__separator">Your Games:</li>
         {{#each rooms}}
           <li class="rooms__list__item rooms__list__joinable {{selectedClass name}}">
             <span class="rooms__name">{{name}}</span>
@@ -36,10 +34,6 @@
         {{/each}}
       </ul>
     </div>
-    {{#if isGame}}
-      {{> game}}
-    {{else}}
-      <h1 class="splash-title">Welcome to Petricide 2.0 ;)</h1>
-    {{/if}}
+    {{> lobby}}
   </div>
 </template>

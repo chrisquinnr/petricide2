@@ -1,19 +1,23 @@
 <template name="game">
-  <div class="chat">
-    <h1>{{roomName}}</h1>
-    <h2>{{nick}} vs {{opponent}}</h2>
-    <ul class="chat__messages">
-      {{#each grid}}
-        <div class="row col-lg-12 col-md-12" id="{{rowID}}">
-          {{#each cells}}
-            <div class="rowCell col-lg-1 col-md-1" data-row="{{../rowID}}" data-position="{{cellID}}">
-              &nbsp;
-            </div>
-          {{/each}}
-          <div class="clearfix"></div>
-        </div>
-      {{/each}}
-    </ul>
-  </div>
-  {{> gameStats}}
+  {{#unless loading}}
+    <div class="gamewindow">
+      <h1>{{roomName}}</h1>
+      <h2>{{nick}} vs {{opponent}}</h2>
+      <div class=game>
+        {{#each grid}}
+          <div class="rowRow" id="{{rowID}}">
+            {{#each cells}}
+              <div class="rowCell" data-row="{{../rowID}}" data-position="{{cellID}}">
+                &nbsp;
+              </div>
+            {{/each}}
+            <div class="clearfix"></div>
+          </div>
+        {{/each}}
+      </div>
+    </div>
+    {{> gameStats}}
+  {{else}}
+      <h1>LOADING</h1>
+  {{/unless}}
 </template>

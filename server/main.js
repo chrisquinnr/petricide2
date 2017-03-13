@@ -64,7 +64,7 @@ Meteor.publish('clients', function() {
  * @param  {String} sid) Client id
  */
 Meteor.publish('rooms', function(sid) {
-  console.log(sid);
+  // console.log(sid);
   if(!sid) {
     return this.error(new Meteor.Error('sid null'));
   }

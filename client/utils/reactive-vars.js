@@ -11,3 +11,4 @@ export let colorChoices = new ReactiveVar([
 export let color = new ReactiveVar();
 export let room = new ReactiveVar('lobby');
 export let counter = new ReactiveVar(0);
+export let loading = new ReactiveVar(false)
